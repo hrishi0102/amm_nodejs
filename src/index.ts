@@ -3,6 +3,8 @@ import express from "express";
 const app = express();
 app.use(express.json());
 
+const API_KEY = " 7B0838AE-0A65-4BE8-8D3F-3E676DAD3C5F";
+
 //constant product x * y = k
 //pprovide same value of assets
 let ETH_BALANCE = 100; //price of eth is 3000
@@ -35,6 +37,24 @@ app.post("/sell", (req, res) => {
 
   res.json({
     message: `You got ${gotAmount} USDT for selling ${quantity} ETH`,
+  });
+});
+
+app.get("/quote", async (req, res) => {
+  const crypto = req.query.crypto;
+  const response = await fetch(
+    `https://rest.coinapi.io/v1/exchangerate/${crypto}/USD`,
+    {
+      headers: {
+        "X-CoinAPI-Key": API_KEY, // Replace with your API key
+      },
+    }
+  );
+  const data = await response.json();
+  const price = data.rate;
+
+  res.json({
+    message: `Current Market Price of ${crypto} is ${price}`,
   });
 });
 
